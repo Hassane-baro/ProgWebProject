@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<!--<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription</title>
+</head>
+<body>
+
+    <center>
+        <form method="post" th:action="@{/user/add}" >
+            <label>Nom :</label>
+            <input type="text" name="nom" th:value="*{nom}"></br>
+            <label>Prénom :</label>
+            <input type="text" name="prenom" th:value="*{prenom}"></br>
+            <label>Email : </label>
+            <input type="email" name="email" th:value="*{email}"></br>
+            <label>Password :</label>
+            <input type="password" name="password" th:value="*{password}"></br>
+            <label>Date de naissance :</label>
+            <input type="text" name="dateNaiss" th:value="*{dateNaiss}"></br>
+            <label>Adresse :</label>
+            <input type="text" name="adresse" th:value="*{adresse}"></br>
+            <label>Num mobile</label>
+            <input type="text" name="numMobile" th:value="*{numMobile}"></br>
+
+            <input type="submit" value="Inscription">
+        </form>
+    </center>
+
+</body>
+</html>
