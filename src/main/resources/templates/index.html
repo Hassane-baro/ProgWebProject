@@ -1,33 +1,38 @@
 <!DOCTYPE html>
+<html lang="en">
 <html xmlns:th="http://www.thymeleaf.org">
-<link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 <head>
-    <meta charset="UTF-8">
-    <title>Page de connexion</title>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
-<body>
-    <h1 class="text-center" id="headTitre"><font class="blue">Prog</font><font class="black">web</font><font class="red">Project</font></h1>
-    <div class="text-center">
-        <form action="/add">
-            <div class="form-group">
-                <div class="col-md-offset-5 col-md-10" >
-                    <div>
-                        <input type="text" name="username">
+<body class="text-center">
+    <div class="container-fluid">
+        <div class="h-100 row allign-items-center">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <h2>Connexion</h2>
+                <form action="/action_page.php">
+                    <div class="form-group">
+                        <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
                     </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-md-offset-5 col-md-10" >
-                    <div>
-                        <input type="text" name="password">
+                    <div class="form-group">
+                        <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd" required>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <a href="/user/Page_inscription">Inscription</a>
+                    </div>
+                    <button type="Connexion" class="btn btn-primary">Connexion</button>
+                </form>
             </div>
-            <input type="submit" name="connexion" value="Connexion">
-            <a href="/user/Page_inscription">Inscription</a>
-        </form>
+            <div class="col-sm-4"></div>
+        </div>
+
     </div>
+
 </body>
 </html>
