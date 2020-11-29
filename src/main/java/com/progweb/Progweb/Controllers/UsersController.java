@@ -33,7 +33,7 @@ public class UsersController {
        if(u != null){
            if(bcrypt.matches(user.getPassword(),u.getPassword())){
 
-               return "Page_accueil";
+               return "redirect:/sondage/accueil";
            }
            else{
                model.addAttribute("message", "Identifiant ou mot de passe incorrect");

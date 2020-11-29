@@ -1,23 +1,41 @@
 package com.progweb.Progweb.Models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 
 @Entity
+@Table(name = "users")
 public class Users {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
+
+    @Column(name="nom", length=100, nullable=false, unique=false)
     private String nom;
+
+    @Column(name="prenom", length=100, nullable=false, unique=false)
     private String prenom;
+
+    @Column(name="email", length=100, nullable=false, unique=false)
     private String email;
+
+    @Column(name="password", length=100, nullable=false, unique=false)
     private String password;
+
+    @Column(name="adresse", length=100, nullable=false, unique=false)
     private String adresse;
+
+    @Column(name="dateNaiss", length=100, nullable=false, unique=false)
     private String dateNaiss;
+
+    @Column(name="numMobile", length=100, nullable=false, unique=false)
     private String numMobile;
+
+    @OneToMany(targetEntity = Sondages.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_fk", referencedColumnName = "id")
+    private List<Sondages> sondages;
 
     public Users(){
 
@@ -32,7 +50,13 @@ public class Users {
         this.numMobile = numMobile;
     }
 
+    public Integer getId() {
+        return id;
+    }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public void setNom(String nom) {
         this.nom = nom;
