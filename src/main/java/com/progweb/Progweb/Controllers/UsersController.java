@@ -27,7 +27,7 @@ public class UsersController {
     }
 
     @PostMapping("/connexion")
-    public String  Connexion(Users user){
+    public String  Connexion(Users user, Model model){
        Users u = usersRepository.findByEmail(user.getEmail());
        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
        if(u != null){
@@ -35,14 +35,30 @@ public class UsersController {
 
                return "Page_accueil";
            }
-           return "redirect:/user/index";
+           else{
+               model.addAttribute("message", "Identifiant ou mot de passe incorrect");
+               model.addAttribute("alertClass", "alert-danger");
+               return "index";
+           }
+
        }
-       return "redirect:/user/index";
+       else{
+           model.addAttribute("message", "Identifiant ou mot de passe incorrect");
+           model.addAttribute("alertClass", "alert-danger");
+           return "index";
+       }
+
     }
 
     @PostMapping("/add") // Map ONLY POST Requests
-    public String addNewUser (Users user) {
+    public String addNewUser (Users user, Model model) {
 
+        if(usersRepository.existsByEmail(user.getEmail())){
+
+            model.addAttribute("message", "Email existant ");
+            model.addAttribute("alertClass", "alert-danger");
+            return "Page_inscription";
+        }
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hash = passwordEncoder.encode(user.getPassword());
         Users n = new Users(user.getNom(),user.getPrenom(),user.getEmail(),hash,user.getAdresse(),user.getDateNaiss(),user.getNumMobile());
