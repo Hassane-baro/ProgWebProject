@@ -1,18 +1,17 @@
 package com.progweb.Progweb.Controllers;
-
 import com.progweb.Progweb.Models.Users;
 import com.progweb.Progweb.Repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping(path="/user")
 public class UsersController {
+
     @Autowired
     private UsersRepository usersRepository;
 
@@ -27,10 +26,26 @@ public class UsersController {
         return "Page_inscription";
     }
 
+    @PostMapping("/connexion")
+    public String  Connexion(Users user){
+       Users u = usersRepository.findByEmail(user.getEmail());
+       BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+       if(u != null){
+           if(bcrypt.matches(user.getPassword(),u.getPassword())){
+
+               return "Page_accueil";
+           }
+           return "redirect:/user/index";
+       }
+       return "redirect:/user/index";
+    }
+
     @PostMapping("/add") // Map ONLY POST Requests
     public String addNewUser (Users user) {
 
-        Users n = new Users(user.getNom(),user.getPrenom(),user.getEmail(),user.getPassword(),user.getAdresse(),user.getDateNaiss(),user.getNumMobile());
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String hash = passwordEncoder.encode(user.getPassword());
+        Users n = new Users(user.getNom(),user.getPrenom(),user.getEmail(),hash,user.getAdresse(),user.getDateNaiss(),user.getNumMobile());
         usersRepository.save(n);
         return "redirect:/user/index";
     }
