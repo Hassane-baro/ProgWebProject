@@ -2,11 +2,16 @@ package com.progweb.Progweb.Controllers;
 import com.progweb.Progweb.Models.Users;
 import com.progweb.Progweb.Repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.result.view.RedirectView;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Map;
 
 @Controller
 @RequestMapping(path="/user")
@@ -27,12 +32,12 @@ public class UsersController {
     }
 
     @PostMapping("/connexion")
-    public String  Connexion(Users user, Model model){
+    public String Connexion(Users user, Model model, RedirectAttributes attributes){
        Users u = usersRepository.findByEmail(user.getEmail());
        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
        if(u != null){
            if(bcrypt.matches(user.getPassword(),u.getPassword())){
-
+               attributes.addFlashAttribute("user", u);
                return "redirect:/sondage/accueil";
            }
            else{

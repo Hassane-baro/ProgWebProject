@@ -107,6 +107,12 @@ public class Users {
         return numMobile;
     }
 
+    public List<Sondages> getSondages() {
+        return sondages;
+    }
 
+    public void setSondages(List<Sondages> sondages) {
+        this.sondages = sondages;
+    }
 
 }

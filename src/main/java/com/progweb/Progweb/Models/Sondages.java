@@ -69,4 +69,7 @@ public class Sondages {
         this.lieuRDV = lieuRDV;
     }
 
+    public Integer getUser_fk() { return user_fk; }
+
+    public void setUser_fk(Integer user_fk) { this.user_fk = user_fk; }
 }

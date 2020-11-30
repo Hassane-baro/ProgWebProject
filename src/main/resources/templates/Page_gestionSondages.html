@@ -29,7 +29,9 @@
                 <div class="form-group">
                     <input type="text" class="form-control"  placeholder="Lieu de rendez-vous" name="lieuRDV" th:value="*{lieuRDV}" required>
                 </div>
+                <input type="hidden" name="user_fk" th:value="${user.id}" >
 
+                <p th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></p>
                 <div class="form-group">
                     <input type="submit" value="Créer">
                 </div>
@@ -48,12 +50,14 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="sondages : ${sondages}">
-            <th scope="row" th:text="${sondages.idSondages}"></th>
-            <td th:text="${sondages.libeller}"></td>
-            <td th:text="${sondages.dateRDV}"></td>
-            <td th:text="${sondages.lieuRDV}"></td>
+
+        <tr th:each="user : ${user.sondages}">
+            <th scope="row" th:text="${user.idSondage}"></th>
+            <td th:text="${user.libeller}"></td>
+            <td th:text="${user.dateRDV}"></td>
+            <td th:text="${user.lieuRDV}"></td>
         </tr>
+
         </tbody>
     </table>
 
