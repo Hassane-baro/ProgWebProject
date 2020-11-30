@@ -19,18 +19,21 @@ public class Sondages {
     @Column(name="lieuRDV", length=100, nullable=false, unique=false)
     private String lieuRDV;
 
-    private Users users;
+    @Column(name = "user_fk")
+    private Integer user_fk;
+
+    //private Users users;
 
 
     public Sondages(){
 
     }
 
-    public Sondages(String libeller, String dateRDV, String lieuRDV, Integer idUser) {
+    public Sondages(String libeller, String dateRDV, String lieuRDV, Integer user_fk) {
         this.libeller = libeller;
         this.dateRDV = dateRDV;
         this.lieuRDV = lieuRDV;
-        this.users.setId(idUser);
+        this.user_fk = user_fk;
 
     }
 

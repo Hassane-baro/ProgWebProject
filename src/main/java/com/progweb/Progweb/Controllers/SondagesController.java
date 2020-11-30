@@ -28,9 +28,10 @@ public class SondagesController {
 
     @PostMapping("/add")
     public String addSondage(Sondages sondage, Model model){
-        Sondages s = new Sondages(sondage.getLibeller(), sondage.getDateRDV(), sondage.getLieuRDV(), 1);
+        Sondages s = new Sondages(sondage.getLibeller(), sondage.getDateRDV(), sondage.getLieuRDV(),1);
         sondagesRepository.save(s);
         model.addAttribute("message", "Le sondage a bien été ajouter");
+        model.addAttribute("sondages", sondagesRepository.findAll());
         return "Page_accueil";
     }
 

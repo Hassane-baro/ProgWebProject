@@ -42,29 +42,17 @@
         <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
+            <th scope="col">Libellé</th>
+            <th scope="col">Date RDV</th>
+            <th scope="col">Lieu RDV</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
+        <tr th:each="sondages : ${sondages}">
+            <th scope="row" th:text="${sondages.idSondages}"></th>
+            <td th:text="${sondages.libeller}"></td>
+            <td th:text="${sondages.dateRDV}"></td>
+            <td th:text="${sondages.lieuRDV}"></td>
         </tr>
         </tbody>
     </table>
