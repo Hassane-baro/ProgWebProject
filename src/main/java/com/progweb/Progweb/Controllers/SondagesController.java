@@ -62,4 +62,27 @@ public class SondagesController {
 
     }
 
+    @GetMapping("/showPageUpdate/{id}/{idUser}")
+    public String showUpdateSondage(@PathVariable int id,@PathVariable int idUser, Model model)
+    {
+        Sondages sondage = sondagesRepository.findById(id).get();
+        model.addAttribute("sondage", sondage);
+        model.addAttribute("idUser", idUser);
+        return "Page_gestionSondagesUpdate";
+
+    }
+
+    @PostMapping("/update")
+    public String updateSondage(Sondages sondage, RedirectAttributes attributes){
+        Sondages s = sondagesRepository.findById(sondage.getIdSondage()).get();
+        s.setDateRDV(sondage.getDateRDV());
+        s.setLibeller(sondage.getLibeller());
+        s.setLieuRDV(sondage.getLieuRDV());
+        sondagesRepository.save(s);
+        attributes.addFlashAttribute("message", "Le sondage a bien été mis à jour");
+        attributes.addFlashAttribute("alertClass", "alert-success");
+        return "redirect:/sondage/gestion/"+sondage.getUser_fk();
+    }
+
+
 }

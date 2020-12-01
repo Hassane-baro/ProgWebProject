@@ -23,7 +23,7 @@
                 <a class="nav-link" href="#">Accueil <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Modifier Profil</a>
+                <a class="nav-link" th:href="@{/user/showUserUpdate/{id}(id = ${user.id})}">Modifier Profil</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" th:href = "@{/sondage/gestion/{id}(id = ${user.id})}">Gérer les Sondages</a>

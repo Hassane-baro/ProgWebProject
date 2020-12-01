@@ -47,7 +47,7 @@
             <th scope="col">Libellé</th>
             <th scope="col">Date RDV</th>
             <th scope="col">Lieu RDV</th>
-            <th scope="col">Action</th>
+            <th scope="col" colspan="2">Action</th>
         </tr>
         </thead>
         <tbody>
@@ -61,12 +61,19 @@
                     <i class="fa fa-remove"></i>
                 </a>
             </th>
+            <th scope="row" >
+                <a th:href="@{/sondage/showPageUpdate/{id}/{idUser}(id = ${Sondage.idSondage},idUser = ${user.id})}" class="ml-1 btn btn-sm btn-success">
+                    <i class="fa fa-update"></i>
+                </a>
+            </th>
         </tr>
 
         </tbody>
     </table>
     <script th:src="@{/js/custom.js}"></script>
 </div>
+
+
 
 </body>
 

@@ -1,4 +1,5 @@
 package com.progweb.Progweb.Controllers;
+import com.progweb.Progweb.Models.Sondages;
 import com.progweb.Progweb.Models.Users;
 import com.progweb.Progweb.Repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,8 @@ public class UsersController {
         return "index";
     }
 
-    @GetMapping("/Page_inscription")
-    public String Page_inscription(@ModelAttribute Users user, Model model){
+    @GetMapping("/showPage_inscription")
+    public String ShowPage_inscription(@ModelAttribute Users user, Model model){
         model.addAttribute("user",user);
         return "Page_inscription";
     }
@@ -78,16 +79,59 @@ public class UsersController {
         return usersRepository.findAll();
     }
 
-    @GetMapping(path="/update/{id}") // Map ONLY POST Requests
-    public @ResponseBody String updateUser (@PathVariable int id) {
+    @GetMapping("/showUserUpdate/{id}")
+    public String showUserUpdate(@PathVariable int id, Model model)
+    {
+        Users user  = usersRepository.findById(id).get();
+        model.addAttribute("user", user);
+        return "Page_userUpdate";
+
+    }
+
+
+    @PostMapping(path="/update") // Map ONLY POST Requests
+    public String updateUser (Users user, RedirectAttributes attributes,Model model) {
         // @ResponseBody means the returned String is the response, not a view name
         // @RequestParam means it is a parameter from the GET or POST request
 
-        Users n = usersRepository.findById(id).get();
-        n.setPrenom("Samba");
-        n.setNom("Aladj");
-        usersRepository.save(n);
-        return "Update";
+        Users n = usersRepository.findById(user.getId()).get();
+        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+        String hash = bcrypt.encode(user.getPassword());
+        if(user.getEmail().equals(n.getEmail())){
+
+        }
+        else {
+
+            if(usersRepository.existsByEmail(user.getEmail())){
+                model.addAttribute("message","Cette email existe déjà ");
+                model.addAttribute("alertClass", "alert-danger");
+                model.addAttribute("user",n);
+                return "Page_userUpdate";
+
+            }
+            else{
+                n.setEmail(user.getEmail());
+            }
+        }
+
+        if(bcrypt.matches(user.getPassword(),n.getPassword())){
+            model.addAttribute("message", "Mot de passe indentique à l'ancien ");
+            model.addAttribute("alertClass", "alert-danger");
+            model.addAttribute("user",n);
+            return "Page_userUpdate";
+        }
+        else{
+
+            n.setPrenom(user.getPrenom());
+            n.setNom(user.getNom());
+            n.setDateNaiss(user.getDateNaiss());
+            n.setAdresse(user.getAdresse());
+            n.setNumMobile(user.getNumMobile());
+            n.setPassword(hash);
+            usersRepository.save(n);
+            attributes.addFlashAttribute("user",user);
+            return "redirect:/sondage/accueil";
+        }
     }
 
     @GetMapping(path="/delete/{id}") // Map ONLY POST Requests
