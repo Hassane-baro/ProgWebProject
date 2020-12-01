@@ -4,15 +4,14 @@ import com.progweb.Progweb.Models.Sondages;
 import com.progweb.Progweb.Models.Users;
 import com.progweb.Progweb.Repository.SondagesRepository;
 import com.progweb.Progweb.Repository.UsersRepository;
-import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.jws.soap.SOAPBinding;
 
 @Controller
 @RequestMapping(path="/sondage")
@@ -43,15 +42,24 @@ public class SondagesController {
     }
 
     @PostMapping("/add")
-    public String addSondage(Sondages sondage, Model model, RedirectAttributes attributes){
+    public String addSondage(Sondages sondage, RedirectAttributes attributes){
 
         Sondages s = new Sondages(sondage.getLibeller(), sondage.getDateRDV(), sondage.getLieuRDV(),sondage.getUser_fk());
         Users user = usersRepository.findById(s.getUser_fk()).get();
         user.getSondages().add(s);
         usersRepository.save(user);
         attributes.addFlashAttribute("message", "Le sondage a bien été ajouter");
-        //model.addAttribute("user", user);
         return "redirect:/sondage/gestion/"+user.getId();
+    }
+
+    @GetMapping("/delete/{id}/{idUser}")
+    public String deleteSondage(@PathVariable int id,@PathVariable int idUser, RedirectAttributes attributes)
+    {
+        sondagesRepository.deleteById(id);
+        attributes.addFlashAttribute("message","Le sondage à bien été supprimé");
+        attributes.addFlashAttribute("alertClass", "alert-success");
+        return "redirect:/sondage/gestion/"+idUser;
+
     }
 
 }
