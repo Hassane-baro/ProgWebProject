@@ -22,9 +22,6 @@ public class Sondages {
     @Column(name = "user_fk")
     private Integer user_fk;
 
-    //private Users users;
-
-
     public Sondages(){
 
     }
