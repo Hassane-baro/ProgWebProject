@@ -1,6 +1,8 @@
 package com.progweb.Progweb.Models;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "sondages")
@@ -21,6 +23,10 @@ public class Sondages {
 
     @Column(name = "user_fk")
     private Integer user_fk;
+
+    //@OneToMany(mappedBy = "sondage")
+    @JoinColumn(name = "sondage")
+    Set<Votes> vote;
 
     public Sondages(){
 

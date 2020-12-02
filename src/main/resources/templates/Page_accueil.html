@@ -10,30 +10,70 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
-<body class="text-center">
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="#">Sondage</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+<br>
+<br class="container">
+    <div class="row">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+            <a class="navbar-brand" href="#">Sondage</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Accueil <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/user/showUserUpdate/{id}(id = ${user.id})}">Modifier Profil</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href = "@{/sondage/gestion/{id}(id = ${user.id})}">Gérer les Sondages</a>
-            </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Déconnexion</button>
-        </form>
+            <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Accueil <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/user/showUserUpdate/{id}(id = ${user.id})}">Modifier Profil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href = "@{/sondage/gestion/{id}(id = ${user.id})}">Gérer les Sondages</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Déconnexion</button>
+                </form>
+            </div>
+        </nav>
+    </div></br></br></br>
+
+    <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Libellé</th>
+                    <th scope="col">Date RDV</th>
+                    <th scope="col">Lieu RDV</th>
+                    <th scope="col" colspan="2">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr th:each="Sondage : ${sondages}">
+                    <td th:text="${Sondage.libeller}"></td>
+                    <td th:text="${Sondage.dateRDV}"></td>
+                    <td th:text="${Sondage.lieuRDV}"></td>
+                    <th scope="row" >
+                        <a th:href="@{/sondage/delete/{id}/{idUser}(id = ${Sondage.idSondage},idUser = ${user.id})}" data-toggle="modal" data-target="action" title="Supprimer" class="ml-1 btn btn-sm btn-danger supp">
+                            <i class="fa fa-remove"></i>
+                        </a>
+                    </th>
+                    <th scope="row" >
+                        <a th:href="@{/sondage/showPageUpdate/{id}/{idUser}(id = ${Sondage.idSondage},idUser = ${user.id})}" class="ml-1 btn btn-sm btn-success">
+                            <i class="fa fa-update"></i>
+                        </a>
+                    </th>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="col-sm-2"></div>
     </div>
-</nav>
+</div>
 
 </body>
 </html>

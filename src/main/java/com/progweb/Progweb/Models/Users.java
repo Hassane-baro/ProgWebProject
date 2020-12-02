@@ -2,6 +2,7 @@ package com.progweb.Progweb.Models;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -33,9 +34,13 @@ public class Users {
     @Column(name="numMobile", length=100, nullable=false, unique=false)
     private String numMobile;
 
-    @OneToMany(targetEntity = Sondages.class, cascade = CascadeType.ALL)
+    //@OneToMany(mappedBy = "user")
+    @JoinColumn(name = "user")
+    Set<Votes> vote;
+
     @JoinColumn(name = "user_fk", referencedColumnName = "id")
     private List<Sondages> sondages;
+
 
     public Users(){
 
