@@ -1,30 +1,61 @@
 package com.progweb.Progweb.Models;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Entity
 @Table(name = "votes")
-public class Votes  {
+public class Votes {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idVote")
+    private  Integer idVote;
 
-    @EmbeddedId
-    private VoteKey idVote;
+    @Column(name = "user_fk")
+    private Integer user_fk;
 
-    @ManyToOne
-    @MapsId("idUser")
-    @JoinColumn(name = "id_User")
-    Users user;
+    @Column(name = "sondage_fk")
+    private Integer sondage_fk;
 
-    @ManyToOne
-    @MapsId("idSondage")
-    @JoinColumn(name = "id_Sondage")
-    Sondages sondage;
-
-    @Column(name = "reponse")
+    @Column
     private boolean reponse;
 
-    @Column(name = "nbVote")
-    private int nbVote;
+    @Column(name = "nbVotants")
+    private Integer nbVotants;
+
+    public Votes(){
+
+    }
+
+    public Votes(Integer user_fk, Integer sondage_fk, boolean reponse, Integer nbVotants) {
+        this.user_fk = user_fk;
+        this.sondage_fk = sondage_fk;
+        this.reponse = reponse;
+        this.nbVotants = nbVotants;
+    }
+
+    public Integer getIdVote() {
+        return idVote;
+    }
+
+    public void setIdVote(Integer idVote) {
+        this.idVote = idVote;
+    }
+
+    public Integer getUser_fk() {
+        return user_fk;
+    }
+
+    public void setUser_fk(Integer user_fk) {
+        this.user_fk = user_fk;
+    }
+
+    public Integer getSondage_fk() {
+        return sondage_fk;
+    }
+
+    public void setSondage_fk(Integer sondage_fk) {
+        this.sondage_fk = sondage_fk;
+    }
 
     public boolean isReponse() {
         return reponse;
@@ -34,11 +65,12 @@ public class Votes  {
         this.reponse = reponse;
     }
 
-    public int getNbVote() {
-        return nbVote;
+    public Integer getNbVotants() {
+        return nbVotants;
     }
 
-    public void setNbVote(int nbVote) {
-        this.nbVote = nbVote;
+    public void setNbVotants(Integer nbVotants) {
+        this.nbVotants = nbVotants;
     }
+
 }

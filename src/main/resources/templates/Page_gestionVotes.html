@@ -22,16 +22,16 @@
             <div class="collapse navbar-collapse" id="navbarsExampleDefault">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href = "#">Accueil <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="#">Accueil <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href = "@{/user/showUserUpdate/{id}(id = ${user.id})}">Modifier Profil</a>
+                        <a class="nav-link" th:href="@{/user/showUserUpdate/{id}(id = ${user.id})}">Modifier Profil</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href = "@{/sondage/gestion/{id}(id = ${user.id})}">Gérer les Sondages</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href = "@{/vote/showGestionVote/{id}(id = ${user.id})}">Gérer mes votes</a>
+                        <a class="nav-link" th:href = "@{/sondage/gestion/{id}(id = ${user.id})}">Gérer mes votes</a>
                     </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
@@ -39,10 +39,7 @@
                 </form>
             </div>
         </nav>
-    </div>
-    <br>
-    <br>
-    <br>
+    </div><br><br><br>
 
     <div class="row">
         <div class="col-sm-2"></div>
@@ -53,7 +50,7 @@
                     <th scope="col">Libellé</th>
                     <th scope="col">Date RDV</th>
                     <th scope="col">Lieu RDV</th>
-                    <th scope="col">Action</th>
+                    <th scope="col" colspan="2">Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -63,8 +60,13 @@
                     <td th:text="${Sondage.dateRDV}"></td>
                     <td th:text="${Sondage.lieuRDV}"></td>
                     <th scope="row" >
-                        <a href="#"  title="voter" >
-                            <button type="button" class="btn btn-primary">Je vote</button>
+                        <a th:href="@{/sondage/delete/{id}/{idUser}(id = ${Sondage.idSondage},idUser = ${user.id})}" data-toggle="modal" data-target="action" title="Supprimer" class="ml-1 btn btn-sm btn-danger supp">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </th>
+                    <th scope="row" >
+                        <a th:href="@{/sondage/showPageUpdate/{id}/{idUser}(id = ${Sondage.idSondage},idUser = ${user.id})}" class="ml-1 btn btn-sm btn-success">
+                            <i class="fa fa-update"></i>
                         </a>
                     </th>
                 </tr>

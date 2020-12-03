@@ -34,12 +34,13 @@ public class Users {
     @Column(name="numMobile", length=100, nullable=false, unique=false)
     private String numMobile;
 
-    //@OneToMany(mappedBy = "user")
-    @JoinColumn(name = "user")
-    Set<Votes> vote;
-
+    @OneToMany(targetEntity = Sondages.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_fk", referencedColumnName = "id")
     private List<Sondages> sondages;
+
+    @OneToMany(targetEntity = Votes.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_fk", referencedColumnName = "id")
+    private List<Votes> votes;
 
 
     public Users(){

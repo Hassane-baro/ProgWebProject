@@ -24,7 +24,7 @@ public class SondagesController {
     @Autowired
     private UsersRepository usersRepository;
 
-    private Cookie cookie;
+    //private Cookie cookie;
 
     //Action qui affiche la page d'accueil
     @GetMapping("/accueil")

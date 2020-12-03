@@ -24,9 +24,11 @@ public class Sondages {
     @Column(name = "user_fk")
     private Integer user_fk;
 
-    //@OneToMany(mappedBy = "sondage")
-    @JoinColumn(name = "sondage")
-    Set<Votes> vote;
+    @OneToMany(targetEntity = Votes.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "sondage_fk", referencedColumnName = "idSondage")
+    private List<Votes> votes;
+
+
 
     public Sondages(){
 
