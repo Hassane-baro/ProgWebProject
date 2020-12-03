@@ -7,13 +7,12 @@ import io.netty.handler.codec.http.cookie.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping(path="/sondage")
@@ -27,11 +26,22 @@ public class SondagesController {
     //private Cookie cookie;
 
     //Action qui affiche la page d'accueil
-    @GetMapping("/accueil")
-    public String index (Model model) {
-        Users userModel = (Users)model.getAttribute("user");
+    //@GetMapping("/accueil")
+    @GetMapping({"/accueil", "/accueil/{id}"})
+    public String index (Model model, @PathVariable("id")Optional<Integer> id) {
+        //Si l'id est null c'est que nous affichons la page d'accueil depuis la page de connexion
+        if(!id.isPresent()){
+            Users userModel = (Users)model.getAttribute("user");
+            model.addAttribute("user",userModel);
+        }
+        //Si l'id n'est pas null c'est que nous somme déja connecté
+        else
+        {
+            Users user = usersRepository.findById(id.get()).get();
+            model.addAttribute("user",user);
+        }
+        //On récupère la liste des sondages
         Iterable<Sondages> sondages = sondagesRepository.findAll();
-        model.addAttribute("user",userModel);
         model.addAttribute("sondages",sondages);
         return "Page_accueil";
     }
