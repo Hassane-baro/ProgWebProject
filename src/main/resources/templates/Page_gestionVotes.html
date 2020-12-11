@@ -40,7 +40,7 @@
             </div>
         </nav>
     </div><br><br><br>
-
+    <p th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></p>
     <div class="row">
         <div class="col-sm-2"></div>
         <div class="col-sm-8">
@@ -60,15 +60,11 @@
                     <td th:text="${Sondage.dateRDV}"></td>
                     <td th:text="${Sondage.lieuRDV}"></td>
                     <th scope="row" >
-                        <a th:href="@{/sondage/delete/{id}/{idUser}(id = ${Sondage.idSondage},idUser = ${user.id})}" data-toggle="modal" data-target="action" title="Supprimer" class="ml-1 btn btn-sm btn-danger supp">
-                            <i class="fa fa-trash"></i>
+                        <a th:href="@{/vote/cancelVote/{id}/{idUser}(id = ${Sondage.idSondage},idUser = ${user.id})}"  title="cancel" >
+                            <button type="button" class="btn btn-danger">Annuler</button>
                         </a>
                     </th>
-                    <th scope="row" >
-                        <a th:href="@{/sondage/showPageUpdate/{id}/{idUser}(id = ${Sondage.idSondage},idUser = ${user.id})}" class="ml-1 btn btn-sm btn-success">
-                            <i class="fa fa-update"></i>
-                        </a>
-                    </th>
+
                 </tr>
 
                 </tbody>

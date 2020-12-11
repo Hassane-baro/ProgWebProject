@@ -19,18 +19,16 @@ public class Votes {
     @Column
     private boolean reponse;
 
-    @Column(name = "nbVotants")
-    private Integer nbVotants;
 
     public Votes(){
 
     }
 
-    public Votes(Integer user_fk, Integer sondage_fk, boolean reponse, Integer nbVotants) {
+    public Votes(Integer user_fk, Integer sondage_fk, boolean reponse) {
         this.user_fk = user_fk;
         this.sondage_fk = sondage_fk;
         this.reponse = reponse;
-        this.nbVotants = nbVotants;
+
     }
 
     public Integer getIdVote() {
@@ -65,12 +63,6 @@ public class Votes {
         this.reponse = reponse;
     }
 
-    public Integer getNbVotants() {
-        return nbVotants;
-    }
 
-    public void setNbVotants(Integer nbVotants) {
-        this.nbVotants = nbVotants;
-    }
 
 }

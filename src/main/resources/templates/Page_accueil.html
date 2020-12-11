@@ -43,7 +43,7 @@
     <br>
     <br>
     <br>
-
+    <p th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"></p>
     <div class="row">
         <div class="col-sm-2"></div>
         <div class="col-sm-8">
@@ -63,8 +63,8 @@
                     <td th:text="${Sondage.dateRDV}"></td>
                     <td th:text="${Sondage.lieuRDV}"></td>
                     <th scope="row" >
-                        <a href="#"  title="voter" >
-                            <button type="button" class="btn btn-primary">Je vote</button>
+                        <a th:href="@{/vote/addVote/{id}/{idUser}(id = ${Sondage.idSondage},idUser = ${user.id})}"  title="voter" >
+                            <button type="button" class="btn btn-primary">Participer</button>
                         </a>
                     </th>
                 </tr>

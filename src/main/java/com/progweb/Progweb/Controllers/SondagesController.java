@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.websocket.server.PathParam;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,18 +31,20 @@ public class SondagesController {
     @GetMapping({"/accueil", "/accueil/{id}"})
     public String index (Model model, @PathVariable("id")Optional<Integer> id) {
         //Si l'id est null c'est que nous affichons la page d'accueil depuis la page de connexion
+        List<Sondages> sondages = new ArrayList<Sondages>();
         if(!id.isPresent()){
             Users userModel = (Users)model.getAttribute("user");
+            sondages = sondagesRepository.AllSpecial(userModel.getId());
             model.addAttribute("user",userModel);
         }
         //Si l'id n'est pas null c'est que nous somme déja connecté
         else
         {
             Users user = usersRepository.findById(id.get()).get();
+            sondages = sondagesRepository.AllSpecial(id.get());
             model.addAttribute("user",user);
         }
         //On récupère la liste des sondages
-        Iterable<Sondages> sondages = sondagesRepository.findAll();
         model.addAttribute("sondages",sondages);
         return "Page_accueil";
     }
