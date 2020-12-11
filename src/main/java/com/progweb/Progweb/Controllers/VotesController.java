@@ -53,6 +53,7 @@ public class VotesController {
     @GetMapping("/cancelVote/{id}/{idUser}")
     public String cancelVote(@PathVariable int id, @PathVariable int idUser, RedirectAttributes attributes){
         votesRepository.DeleteVote(id,idUser);
+        //votesRepository.DeleteVote(id);
         attributes.addFlashAttribute("alertClass" ,"alert-success");
         attributes.addFlashAttribute("message","Le vote à bien été supprimé");
         return "redirect:/vote/showGestionVote/"+idUser;

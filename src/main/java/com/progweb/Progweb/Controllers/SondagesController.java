@@ -3,13 +3,15 @@ import com.progweb.Progweb.Models.Sondages;
 import com.progweb.Progweb.Models.Users;
 import com.progweb.Progweb.Repository.SondagesRepository;
 import com.progweb.Progweb.Repository.UsersRepository;
-import io.netty.handler.codec.http.cookie.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.WebUtils;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +31,13 @@ public class SondagesController {
     //Action qui affiche la page d'accueil
     //@GetMapping("/accueil")
     @GetMapping({"/accueil", "/accueil/{id}"})
-    public String index (Model model, @PathVariable("id")Optional<Integer> id) {
+    public String index (Model model, @PathVariable("id")Optional<Integer> id, HttpServletRequest request) {
         //Si l'id est null c'est que nous affichons la page d'accueil depuis la page de connexion
+        //Cookie[] cookies =  request.getCookies();
+        Cookie tokenCookie = WebUtils.getCookie(request,"usermail");
+        if(tokenCookie == null){
+            return "index";
+        }
         List<Sondages> sondages = new ArrayList<Sondages>();
         if(!id.isPresent()){
             Users userModel = (Users)model.getAttribute("user");

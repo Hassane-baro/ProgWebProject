@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.result.view.RedirectView;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 //Controller qui ne concerne que les actions sur l'utilisateur
@@ -35,7 +39,7 @@ public class UsersController {
 
     //Action qui gère la connexion
     @PostMapping("/connexion")
-    public String Connexion(Users user, Model model, RedirectAttributes attributes){
+    public String Connexion(Users user, Model model, RedirectAttributes attributes, HttpServletResponse response){
        Users u = usersRepository.findByEmail(user.getEmail());
        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
        //Vérifie si il existe en base avec le retour de l'objet
@@ -43,6 +47,8 @@ public class UsersController {
            // Vérifie si le mot de passe est similaire à celui en base si oui on se connecte
            if(bcrypt.matches(user.getPassword(),u.getPassword())){
                attributes.addFlashAttribute("user", u);
+               Cookie cookie = new Cookie("usermail", user.getEmail());
+               response.addCookie(cookie);
                return "redirect:/sondage/accueil";
            }
            else{
