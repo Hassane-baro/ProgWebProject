@@ -35,3 +35,15 @@
     });
  });
 
+ $(document).ready(function(){
+
+             // check paragraph once toggle effect is completed
+             if($("p").is(":visible")){
+                 setTimeout(function() {
+                                     $('p').fadeToggle('slow');
+                                 }, 2000);
+             } else{
+
+             }
+ });
+

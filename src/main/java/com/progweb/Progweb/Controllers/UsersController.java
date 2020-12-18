@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 
 //Controller qui ne concerne que les actions sur l'utilisateur
@@ -178,8 +179,9 @@ public class UsersController {
     }
 
     public Boolean TokenExist(Integer idUser){
-        Token token = tokensRepository.GetToken(idUser);
-        if(token == null){
+        List<Token> tokenList = tokensRepository.userTokens(idUser);
+
+        if(tokenList.isEmpty()){
 
             return false;
         }
@@ -195,9 +197,5 @@ public class UsersController {
         usersRepository.deleteById(id);
         return "Delete";
     }
-
-    
-
-
 
 }

@@ -88,8 +88,9 @@ public class VotesController {
     }
 
     public Boolean TokenExist(Integer idUser){
-        Token token = tokensRepository.GetToken(idUser);
-        if(token == null){
+        List<Token> tokenList = tokensRepository.userTokens(idUser);
+
+        if(tokenList.isEmpty()){
 
             return false;
         }
