@@ -1,18 +1,20 @@
 package com.progweb.Progweb.Controllers;
+
 import com.progweb.Progweb.Models.Sondages;
+import com.progweb.Progweb.Models.Token;
 import com.progweb.Progweb.Models.Users;
 import com.progweb.Progweb.Repository.SondagesRepository;
+import com.progweb.Progweb.Repository.TokensRepository;
 import com.progweb.Progweb.Repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.WebUtils;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.PathParam;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,47 +27,60 @@ public class SondagesController {
     private SondagesRepository sondagesRepository;
     @Autowired
     private UsersRepository usersRepository;
+    @Autowired
+    private TokensRepository tokensRepository;
 
-    //private Cookie cookie;
 
     //Action qui affiche la page d'accueil
     //@GetMapping("/accueil")
     @GetMapping({"/accueil", "/accueil/{id}"})
-    public String index (Model model, @PathVariable("id")Optional<Integer> id, HttpServletRequest request) {
+    public String index (Model model, @PathVariable("id")Optional<Integer> id,RedirectAttributes attributes) {
         //Si l'id est null c'est que nous affichons la page d'accueil depuis la page de connexion
-        //Cookie[] cookies =  request.getCookies();
-        Cookie tokenCookie = WebUtils.getCookie(request,"usermail");
-        if(tokenCookie == null){
-            return "index";
-        }
-        List<Sondages> sondages = new ArrayList<Sondages>();
-        if(!id.isPresent()){
-            Users userModel = (Users)model.getAttribute("user");
-            sondages = sondagesRepository.AllSpecial(userModel.getId());
-            model.addAttribute("user",userModel);
-        }
-        //Si l'id n'est pas null c'est que nous somme déja connecté
-        else
-        {
-            Users user = usersRepository.findById(id.get()).get();
-            sondages = sondagesRepository.AllSpecial(id.get());
-            model.addAttribute("user",user);
-        }
-        //On récupère la liste des sondages
-        model.addAttribute("sondages",sondages);
-        return "Page_accueil";
+            List<Sondages> sondages = new ArrayList<Sondages>();
+            if(!id.isPresent()){
+                Users userModel = (Users)model.getAttribute("user");
+                sondages = sondagesRepository.AllSpecial(userModel.getId());
+                model.addAttribute("user",userModel);
+            }
+            //Si l'id n'est pas null c'est que nous somme déja connecté
+            else
+            {
+                if(TokenExist(id.get())){
+                    Users user = usersRepository.findById(id.get()).get();
+                    sondages = sondagesRepository.AllSpecial(id.get());
+                    model.addAttribute("user",user);
+                }
+                else{
+                    attributes.addFlashAttribute("message","Veuillez vous connecter ");
+                    attributes.addFlashAttribute("alertClass", "alert-danger");
+                    return "redirect:/user/index";
+                }
+
+            }
+            //On récupère la liste des sondages
+            model.addAttribute("sondages",sondages);
+            return "Page_accueil";
+
     }
     //Action qui affiche la page de gestion des sondages
     @GetMapping("/gestion/{id}")
-    public String showGestionSondages(@PathVariable int id,Model model)
+    public String showGestionSondages(@PathVariable int id,Model model,RedirectAttributes attributes)
     {
-        //Rêquete qui récupère l'utilisateur et tous ses sondages pour les afficher dans la page de gestion de sondage
-        Users user = usersRepository.findById(id).get();
-        String messageModel = (String) model.getAttribute("message");
-        model.addAttribute("message",messageModel);
-        model.addAttribute("alertClass", "alert-success");
-        model.addAttribute("user",user);
-        return "Page_gestionSondages";
+        if(TokenExist(id)){
+            //Rêquete qui récupère l'utilisateur et tous ses sondages pour les afficher dans la page de gestion de sondage
+            Users user = usersRepository.findById(id).get();
+            String messageModel = (String) model.getAttribute("message");
+            model.addAttribute("message",messageModel);
+            model.addAttribute("alertClass", "alert-success");
+            model.addAttribute("user",user);
+            return "Page_gestionSondages";
+        }
+        else {
+            attributes.addFlashAttribute("message","Veuillez vous connecter ");
+            attributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/user/index";
+        }
+
 
     }
     //Action pour ajouter un nouveau sondage
@@ -83,20 +98,35 @@ public class SondagesController {
     @GetMapping("/delete/{id}/{idUser}")
     public String deleteSondage(@PathVariable int id,@PathVariable int idUser, RedirectAttributes attributes)
     {
-        sondagesRepository.deleteById(id);
-        attributes.addFlashAttribute("message","Le sondage à bien été supprimé");
-        attributes.addFlashAttribute("alertClass", "alert-success");
-        return "redirect:/sondage/gestion/"+idUser;
+        if (TokenExist(idUser)){
+            sondagesRepository.deleteById(id);
+            attributes.addFlashAttribute("message","Le sondage à bien été supprimé");
+            attributes.addFlashAttribute("alertClass", "alert-success");
+            return "redirect:/sondage/gestion/"+idUser;
+        }
+        else{
+            attributes.addFlashAttribute("message","Veuillez vous connecter ");
+            attributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/user/index";
+        }
+
 
     }
     //Action pour afficher la page de modification d'un sondage
     @GetMapping("/showPageUpdate/{id}/{idUser}")
-    public String showUpdateSondage(@PathVariable int id,@PathVariable int idUser, Model model)
+    public String showUpdateSondage(@PathVariable int id,@PathVariable int idUser, Model model,RedirectAttributes attributes)
     {
-        Sondages sondage = sondagesRepository.findById(id).get();
-        model.addAttribute("sondage", sondage);
-        model.addAttribute("idUser", idUser);
-        return "Page_gestionSondagesUpdate";
+        if(TokenExist(idUser)){
+            Sondages sondage = sondagesRepository.findById(id).get();
+            model.addAttribute("sondage", sondage);
+            model.addAttribute("idUser", idUser);
+            return "Page_gestionSondagesUpdate";
+        }
+        else{
+            attributes.addFlashAttribute("message","Veuillez vous connecter ");
+            attributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/user/index";
+        }
 
     }
     //Action pour modifier un sondage
@@ -110,6 +140,17 @@ public class SondagesController {
         attributes.addFlashAttribute("message", "Le sondage a bien été mis à jour");
         attributes.addFlashAttribute("alertClass", "alert-success");
         return "redirect:/sondage/gestion/"+sondage.getUser_fk();
+    }
+
+    public Boolean TokenExist(Integer idUser){
+        Token token = tokensRepository.GetToken(idUser);
+        if(token == null){
+
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 
 

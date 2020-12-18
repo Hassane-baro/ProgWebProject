@@ -1,6 +1,9 @@
 package com.progweb.Progweb.Controllers;
 import com.progweb.Progweb.Models.Sondages;
+import com.progweb.Progweb.Models.Token;
+import com.progweb.Progweb.Models.TokenGen;
 import com.progweb.Progweb.Models.Users;
+import com.progweb.Progweb.Repository.TokensRepository;
 import com.progweb.Progweb.Repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,6 +27,8 @@ public class UsersController {
 
     @Autowired
     private UsersRepository usersRepository;
+    @Autowired
+    private TokensRepository tokensRepository;
 
     //Affichage de la page de connexion
     @GetMapping("/index")
@@ -46,9 +51,11 @@ public class UsersController {
        if(u != null){
            // Vérifie si le mot de passe est similaire à celui en base si oui on se connecte
            if(bcrypt.matches(user.getPassword(),u.getPassword())){
+               TokenGen tokenGen = new TokenGen();
+               String tokenString = tokenGen.CreateToken();
+               Token token = new Token(tokenString,u.getId());
+               tokensRepository.save(token);
                attributes.addFlashAttribute("user", u);
-               Cookie cookie = new Cookie("usermail", user.getEmail());
-               response.addCookie(cookie);
                return "redirect:/sondage/accueil";
            }
            else{
@@ -71,6 +78,7 @@ public class UsersController {
     //Action pour ajouter un utilisateur en base (Inscription)
     @PostMapping("/add") // Map ONLY POST Requests
     public String addNewUser (Users user, Model model) {
+
         //Vérifie si un email du même nom n'existe pas déjà
         if(usersRepository.existsByEmail(user.getEmail())){
             //Si oui on envoi un message d'erreur
@@ -94,61 +102,92 @@ public class UsersController {
 
     //Action qui affiche la page de modification du profil utilisateur
     @GetMapping("/showUserUpdate/{id}")
-    public String showUserUpdate(@PathVariable int id, Model model)
+    public String showUserUpdate(@PathVariable int id, Model model, RedirectAttributes attributes)
     {
+        if(TokenExist(id)){
+            Users user  = usersRepository.findById(id).get();
+            model.addAttribute("user", user);
+            return "Page_userUpdate";
+        }
+        else{
+            attributes.addFlashAttribute("message","Veuillez vous connecter ");
+            attributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/user/index";
+        }
         //Récupère les données utilisateur en base pour les afficher dans les input à l'affichage de la page
-        Users user  = usersRepository.findById(id).get();
-        model.addAttribute("user", user);
-        return "Page_userUpdate";
-
     }
 
     //Action qui modifie les données utilisateur dans la page de modification du profil
     @PostMapping(path="/update") // Map ONLY POST Requests
     public String updateUser (Users user, RedirectAttributes attributes,Model model) {
+        if(TokenExist(user.getId())){
+            Users n = usersRepository.findById(user.getId()).get();
+            BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+            String hash = bcrypt.encode(user.getPassword());
+            // Je vérifie si l'utilisateur a laisser le même email en saisie
+            if(user.getEmail().equals(n.getEmail())){
+                //Si oui je n'update pas l'email
+            }
+            else {
+                // Si l'utilisateur a saisie un nouvel email je vérifie s'il n'existe pas un compte avec le même email
+                if(usersRepository.existsByEmail(user.getEmail())){
+                    //Je renvoi une erreur si un email du même nom existe en base
+                    model.addAttribute("message","Cette email existe déjà ");
+                    model.addAttribute("alertClass", "alert-danger");
+                    model.addAttribute("user",n);
+                    return "Page_userUpdate";
 
-        Users n = usersRepository.findById(user.getId()).get();
-        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
-        String hash = bcrypt.encode(user.getPassword());
-        // Je vérifie si l'utilisateur a laisser le même email en saisie
-        if(user.getEmail().equals(n.getEmail())){
-            //Si oui je n'update pas l'email
-        }
-        else {
-            // Si l'utilisateur a saisie un nouvel email je vérifie s'il n'existe pas un compte avec le même email
-            if(usersRepository.existsByEmail(user.getEmail())){
-                //Je renvoi une erreur si un email du même nom existe en base
-                model.addAttribute("message","Cette email existe déjà ");
+                }
+                else{
+                    //Si le nouvel email n'existe pas je peux effectué la modification avec l'ancien email
+                    n.setEmail(user.getEmail());
+                }
+            }
+            // Je vérifie si le nouveau mot de passe est le même que l'ancien si oui je renvoi une erreur
+            if(bcrypt.matches(user.getPassword(),n.getPassword())){
+                model.addAttribute("message", "Mot de passe indentique à l'ancien ");
                 model.addAttribute("alertClass", "alert-danger");
                 model.addAttribute("user",n);
                 return "Page_userUpdate";
-
             }
             else{
-                //Si le nouvel email n'existe pas je peux effectué la modification avec l'ancien email
-                n.setEmail(user.getEmail());
+                //Sinon j'effectue toute les modification sur tous les champs modifié
+                n.setPrenom(user.getPrenom());
+                n.setNom(user.getNom());
+                n.setDateNaiss(user.getDateNaiss());
+                n.setAdresse(user.getAdresse());
+                n.setNumMobile(user.getNumMobile());
+                n.setPassword(hash);
+                usersRepository.save(n);
+                attributes.addFlashAttribute("user",user);
+                return "redirect:/sondage/accueil";
             }
         }
-        // Je vérifie si le nouveau mot de passe est le même que l'ancien si oui je renvoi une erreur
-        if(bcrypt.matches(user.getPassword(),n.getPassword())){
-            model.addAttribute("message", "Mot de passe indentique à l'ancien ");
-            model.addAttribute("alertClass", "alert-danger");
-            model.addAttribute("user",n);
-            return "Page_userUpdate";
+        else {
+            attributes.addFlashAttribute("message","Veuillez vous connecter ");
+            attributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/user/index";
+        }
+
+    }
+
+    @GetMapping("/deconnexion/{id}")
+    public String deconnexion(@PathVariable Integer id){
+        tokensRepository.DeleteToken(id);
+        return "redirect:/user/index";
+    }
+
+    public Boolean TokenExist(Integer idUser){
+        Token token = tokensRepository.GetToken(idUser);
+        if(token == null){
+
+            return false;
         }
         else{
-            //Sinon j'effectue toute les modification sur tous les champs modifié
-            n.setPrenom(user.getPrenom());
-            n.setNom(user.getNom());
-            n.setDateNaiss(user.getDateNaiss());
-            n.setAdresse(user.getAdresse());
-            n.setNumMobile(user.getNumMobile());
-            n.setPassword(hash);
-            usersRepository.save(n);
-            attributes.addFlashAttribute("user",user);
-            return "redirect:/sondage/accueil";
+            return true;
         }
     }
+
 
     @GetMapping(path="/delete/{id}") // Map ONLY POST Requests
     public @ResponseBody String deleteUser (@PathVariable int id) {
@@ -156,6 +195,8 @@ public class UsersController {
         usersRepository.deleteById(id);
         return "Delete";
     }
+
+    
 
 
 

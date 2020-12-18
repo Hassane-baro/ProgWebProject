@@ -35,9 +35,9 @@
                         <a class="nav-link" th:href = "@{/vote/showGestionVote/{id}(id = ${user.id})}">Gérer mes votes</a>
                     </li>
                 </ul>
-                <form class="form-inline my-2 my-lg-0">
+                <a th:href = "@{/user/deconnexion/{id}(id = ${user.id})}">
                     <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Déconnexion</button>
-                </form>
+                </a>
             </div>
         </nav>
     </div><br><br><br>
